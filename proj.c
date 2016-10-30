@@ -1,13 +1,13 @@
-#include <iostream>
-using namespace std;
+#include<stdio>
+#include<pthreads>
 
-int main() {
-    char[] processos ={'l','e','l','l','l','e'};
-    int i =0, tam=5;
-    while(i<tam){
-        printf("%c",pr)
-        i++;
-    }
-	// your code goes here
-	return 0;
+\\ Definir a criação de uma thread
+
+\\ Definir o tipo de uma determinada thread
+
+\\ Criar a main associada ao programa
+
+int main (void){
+
+return 1;
 }
