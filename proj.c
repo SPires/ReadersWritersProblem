@@ -1,4 +1,4 @@
-#include<stdio.h
+#include<stdio.h>
 #include<pthread.h>
 
 \\ Definir a criação de uma thread
