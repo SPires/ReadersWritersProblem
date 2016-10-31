@@ -50,9 +50,9 @@ int pilha = 0;
 	char nome[] = "teste.txt";
     FILE *fp = fopen(nome,"at");
     if (!fp) exit(1);
-    char linha[] = "Há um escritor aqui!!!\n";
+    char linha[] = "\nEscrevi!";
     fseek(fp, 0L, SEEK_END);
-    fprintf(fp,"%s\n",linha);
+    fprintf(fp,"%s",linha);
     fclose(fp);
 	
 	// Confirmar que a alteração foi feita.
@@ -65,10 +65,9 @@ int pilha = 0;
  }
 
  int main (int argc, char *argv[]){
-    
 	int num;
-	printf("Indique o número de threads a serem criadas: \n");
-	scanf("%d ",&num);
+	printf("Indique o numero de threads a serem criadas:\n");
+	scanf("%d",&num);
 	
 	//Crio o vetor de threads.
 	pthread_t threads[num];
@@ -85,14 +84,15 @@ int pilha = 0;
 	// Inicialização dos semáforos.
 	pthread_mutex_init(&lei, NULL);
 	pthread_mutex_init(&esc, NULL);
-
+    pthread_mutex_init(&prot, NULL);
+	
     int rc, tipo;
     long i;
 	char arquivo[] = "teste.txt";
 	
 	//Criar o número de threads determinada pelo usuário.
     for(i = 0; i < num; i++){
-        
+			
 		// Tipo determina como a thread será escritor ou leitor.
 		tipo = rand() % 2;
 	    
@@ -101,10 +101,10 @@ int pilha = 0;
 	    
 		//Criação das threads.
 		if (tipo == 0){
-			rc = pthread_create(&threads[i], &attr, escritor, (void *)i);
+			rc = pthread_create(&threads[i], NULL, escritor, (void *)i);
 		}
 		if (tipo == 1){
-			rc = pthread_create(&threads[i], &attr, leitor, (void *)i);
+			rc = pthread_create(&threads[i], NULL, leitor, (void *)i);
         }
 		
 		//Capturar possíveis erros.
@@ -125,6 +125,6 @@ int pilha = 0;
          	exit(-1);
         }
     }
-
+    system("pause");
 	return 0;
  }
