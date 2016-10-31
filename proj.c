@@ -37,7 +37,7 @@
 	char arquivo[] = "teste.txt";
 	
     for(i=0; i<NUM_THREADS; i++){
-       printf("In main: creating thread %ld\n", i);
+       printf("Main: criando thread #%ld\n", i);
 	   if(j == 2){
 			rc = pthread_create(&threads[i], NULL, escritor, (void *)i);
 			j = 0;
