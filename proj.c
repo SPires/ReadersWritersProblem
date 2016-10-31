@@ -18,6 +18,10 @@
 
  int main (int argc, char *argv[]){
     pthread_t threads[NUM_THREADS];
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);	 
+
     int rc;
     long i;
 	int j = 0;
@@ -37,6 +41,16 @@
           exit(-1);
        }
     }
+	
+	pthread_attr_destroy(&attr);
+	
+	for(i=0; i<NUM_THREADS; i++) {
+       		rc = pthread_join(threads[i], NULL);
+      		if (rc) {
+         		 printf("ERROR; return code from pthread_join() is %d\n", rc);
+         		 exit(-1);
+         	 }
+       }
 
 	return 0;
  }
