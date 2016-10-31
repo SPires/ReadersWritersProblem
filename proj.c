@@ -5,11 +5,15 @@
 #define NUM_THREADS     5
 
  void *leitor(void *argumento){
+	 int* n = (int*) argumento;
     char nome[] = "teste.txt";
     FILE *fp = fopen(nome,"rt");
     if (!fp) exit(1);
     char linha[50];
-    while (fgets(linha, 50, fp))  printf("%s\n",linha);
+    while (fgets(linha, 50, fp)){  
+		printf("Leitor#%d: ", n);
+		printf("%s\n",linha);
+	}
     fclose(fp);
     pthread_exit(NULL);
  }
