@@ -5,7 +5,6 @@
 #define NUM_THREADS     5
 
  void *leitor(void *argumento){
-    //le
     char nome[] = "teste.txt";
     FILE *fp = fopen(nome,"rt");
     if (!fp) exit(1);
@@ -16,8 +15,13 @@
  }
  
   void *escritor(void *argumento){
-    //escreve
-	printf("Escrevendo\n");
+    char nome[] = "teste.txt";
+    FILE *fp = fopen(nome,"at");
+    if (!fp) exit(1);
+    char linha[] = "Oi, estou escrevendo!";
+    fseek(fp, 0L, SEEK_END);
+    fprint(fp,"%s\n",linha);
+    fclose(fp);
     pthread_exit(NULL);
  }
 
