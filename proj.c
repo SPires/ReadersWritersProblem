@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <semaphore.h>
 #define NUM_THREADS     5
 
  void *leitor(void *argumento){
@@ -37,6 +38,5 @@
        }
     }
 
-    pthread_exit(NULL);
 	return 0;
  }
