@@ -6,7 +6,12 @@
 
  void *leitor(void *argumento){
     //le
-	printf("Lendo\n");
+    char nome[] = "teste.txt";
+    FILE *fp = fopen(nome,"rt");
+    if (!fp) exit(1);
+    char linha[50];
+    while (fgets(linha, 50, fp))  printf("%s\n",linha);
+    fopen(fp);
     pthread_exit(NULL);
  }
  
