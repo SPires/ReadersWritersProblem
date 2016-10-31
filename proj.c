@@ -17,7 +17,7 @@ int pilha = 0;
     FILE *fp = fopen(nome,"rt");
     if (!fp) exit(1);
     char linha[50];
-	printf("\nLeitores no momento: %d", pilha);
+	printf("\nLeitores no momento: %d\n", pilha);
     while (fgets(linha, 50, fp)){  
 		printf("Leitor#%d: %s\n", n, linha);
 	}
@@ -29,12 +29,13 @@ int pilha = 0;
  
   void *escritor(void *argumento){
 	pthread_mutex_lock(&lei);
+	printf("Esperando acabar as leituras\n");
 	pthread_mutex_lock(&esc);
 	int* n = (int*) argumento;
     char nome[] = "teste.txt";
     FILE *fp = fopen(nome,"at");
     if (!fp) exit(1);
-    char linha[] = "Oi, estou escrevendo!";
+    char linha[] = "Há um escritor aqui!!!\n";
     fseek(fp, 0L, SEEK_END);
     fprintf(fp,"%s\n",linha);
     fclose(fp);
@@ -53,21 +54,30 @@ int pilha = 0;
 	pthread_mutex_init(&lei, NULL);
 	pthread_mutex_init(&esc, NULL);
 	
-    int rc;
+	int num;
+	printf("Indique o número de threads a serem criadas: \n");
+	scanf("%d\n",&num);
+	
+	
+    int rc, tipo;
     long i;
-	int j = 0;
 	char arquivo[] = "teste.txt";
 	
-    for(i=0; i<NUM_THREADS; i++){
-       printf("Main: criando thread #%ld\n", i);
-	   if(j == 6){
+	//Criar o número de threads determinada pelo usuário.
+    for(i = 0; i < NUM_THREADS; i++){
+        
+		// Tipo determina como a thread será escritor ou leitor.
+		tipo = rand() % 2;
+	    
+		//Anúncio da criação da thread.
+		printf("Main: criando thread #%ld\n", i);
+	    
+		//Criação das threads.
+		if (tipo == 0)
 			rc = pthread_create(&threads[i], NULL, escritor, (void *)i);
-			j = 0;
-	   }else{
-		   rc = pthread_create(&threads[i], NULL, leitor, (void *)i);
-		   j++;
-	   }
-       if (rc){
+		if (tipo == 1)
+			rc = pthread_create(&threads[i], NULL, leitor, (void *)i);
+        if (rc){
           printf("ERROR; return code from pthread_create() is %d\n", rc);
           exit(-1);
        }
