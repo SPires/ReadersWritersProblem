@@ -11,7 +11,7 @@
     if (!fp) exit(1);
     char linha[50];
     while (fgets(linha, 50, fp))  printf("%s\n",linha);
-    fopen(fp);
+    fclose(fp);
     pthread_exit(NULL);
  }
  
