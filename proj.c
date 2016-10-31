@@ -2,23 +2,35 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <semaphore.h>
-#define NUM_THREADS     5
+#define NUM_THREADS     10
+
+pthread_mutex_t esc, lei;
+int pilha = 0;
 
  void *leitor(void *argumento){
-	 int* n = (int*) argumento;
+	pthread_mutex_lock(&lei);
+	pilha++;
+	if(pilha == 1) pthread_mutex_lock(&esc);
+	pthread_mutex_unlock(&lei);
+	int* n = (int*) argumento;
     char nome[] = "teste.txt";
     FILE *fp = fopen(nome,"rt");
     if (!fp) exit(1);
     char linha[50];
+	printf("\nLeitores no momento: %d", pilha);
     while (fgets(linha, 50, fp)){  
-		printf("Leitor#%d: ", n);
-		printf("%s\n",linha);
+		printf("Leitor#%d: %s\n", n, linha);
 	}
     fclose(fp);
+	pilha--;
+	if( pilha == 0) pthread_mutex_unlock(&esc);
     pthread_exit(NULL);
  }
  
   void *escritor(void *argumento){
+	pthread_mutex_lock(&lei);
+	pthread_mutex_lock(&esc);
+	int* n = (int*) argumento;
     char nome[] = "teste.txt";
     FILE *fp = fopen(nome,"at");
     if (!fp) exit(1);
@@ -26,6 +38,9 @@
     fseek(fp, 0L, SEEK_END);
     fprintf(fp,"%s\n",linha);
     fclose(fp);
+	printf("Escritor #%d alterou o arquivo \n", n);
+	pthread_mutex_unlock(&esc);
+	pthread_mutex_unlock(&lei);
     pthread_exit(NULL);
  }
 
@@ -34,7 +49,10 @@
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);	 
-
+	
+	pthread_mutex_init(&lei, NULL);
+	pthread_mutex_init(&esc, NULL);
+	
     int rc;
     long i;
 	int j = 0;
@@ -42,7 +60,7 @@
 	
     for(i=0; i<NUM_THREADS; i++){
        printf("Main: criando thread #%ld\n", i);
-	   if(j == 2){
+	   if(j == 6){
 			rc = pthread_create(&threads[i], NULL, escritor, (void *)i);
 			j = 0;
 	   }else{
