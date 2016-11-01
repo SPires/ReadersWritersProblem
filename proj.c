@@ -1,13 +1,12 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <semaphore.h>
 
 pthread_mutex_t esc, lei, prot;
 int pilha = 0;
 
  void *leitor(void *argumento){
-	// Não deixa mais leitores entrarem e para proteger o incremento pilha.
+	// Não deixa mais leitores entrarem para proteger o incremento pilha.
 	pthread_mutex_lock(&lei);
 	pilha++;
 	if(pilha == 1) pthread_mutex_lock(&esc);
@@ -21,7 +20,7 @@ int pilha = 0;
     FILE *fp = fopen(nome,"rt");
     if (!fp) exit(1);
     char linha[50];
-	printf("\n Leitores no momento: %d \n", pilha);
+	printf("\nLeitores no momento: %d \n", pilha);
 	while (fgets(linha, 50, fp)){  
 		printf("Leitor#%d: %s \n", n, linha);
 	}
@@ -38,7 +37,7 @@ int pilha = 0;
   void *escritor(void *argumento){
 	// Impede a entrada de leitores.
 	pthread_mutex_lock(&lei);
-	printf("Aguardando... \n");
+	printf("Aguardando %d leitor(es)... \n", pilha);
 	
 	// Aguarda a liberação para a escrita.
 	pthread_mutex_lock(&esc);
@@ -101,10 +100,10 @@ int pilha = 0;
 	    
 		//Criação das threads.
 		if (tipo == 0){
-			rc = pthread_create(&threads[i], NULL, escritor, (void *)i);
+			rc = pthread_create(&threads[i], &attr, escritor, (void *)i);
 		}
 		if (tipo == 1){
-			rc = pthread_create(&threads[i], NULL, leitor, (void *)i);
+			rc = pthread_create(&threads[i], &attr, leitor, (void *)i);
         }
 		
 		//Capturar possíveis erros.
